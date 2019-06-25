@@ -19,7 +19,7 @@ from dataset import tfidf_from_questions
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', type=str, default='vqa', help='vqa or flickr')
-    parser.add_argument('--epochs', type=int, default=13)
+    parser.add_argument('--epochs', type=int, default=20)
     parser.add_argument('--num_hid', type=int, default=1280)
     parser.add_argument('--model', type=str, default='ban')
     parser.add_argument('--op', type=str, default='c')
@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument('--tfidf', action='store_false', help='tfidf word embedding?')
     parser.add_argument('--input', type=str, default=None)
     parser.add_argument('--output', type=str, default='saved_models/ban')
-    parser.add_argument('--batch_size', type=int, default=256)
+    parser.add_argument('--batch_size', type=int, default=192)
     parser.add_argument('--seed', type=int, default=1204, help='random seed')
     args = parser.parse_args()
     return args
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     model.w_emb.init_embedding(w_emb_path, tfidf, weights)
 
     model = nn.DataParallel(model).cuda()
-
+    # if device_ids =None, device_ids = all gpu
     optim = None
     epoch = 0
 
@@ -105,14 +105,14 @@ if __name__ == '__main__':
                 trainval_dset = ConcatDataset([train_dset, val_dset]+vg_dsets)
             else:
                 trainval_dset = ConcatDataset([train_dset, val_dset])
-            train_loader = DataLoader(trainval_dset, batch_size, shuffle=True, num_workers=1, collate_fn=utils.trim_collate)
+            train_loader = DataLoader(trainval_dset, batch_size, shuffle=True, num_workers=0, collate_fn=utils.trim_collate)
             eval_loader = None
         else:
-            train_loader = DataLoader(train_dset, batch_size, shuffle=True, num_workers=1, collate_fn=utils.trim_collate)
-            eval_loader = DataLoader(val_dset, batch_size, shuffle=False, num_workers=1, collate_fn=utils.trim_collate)
+            train_loader = DataLoader(train_dset, batch_size, shuffle=True, num_workers=0, collate_fn=utils.trim_collate)
+            eval_loader = DataLoader(val_dset, batch_size, shuffle=False, num_workers=0, collate_fn=utils.trim_collate)
 
     elif args.task == 'flickr':
-        train_loader = DataLoader(train_dset, batch_size, shuffle=True, num_workers=1, collate_fn=utils.trim_collate)
-        eval_loader = DataLoader(val_dset, batch_size, shuffle=False, num_workers=1, collate_fn=utils.trim_collate)
+        train_loader = DataLoader(train_dset, batch_size, shuffle=True, num_workers=2, collate_fn=utils.trim_collate)
+        eval_loader = DataLoader(val_dset, batch_size, shuffle=False, num_workers=2, collate_fn=utils.trim_collate)
 
     train(model, train_loader, eval_loader, args.epochs, args.output, optim, epoch)

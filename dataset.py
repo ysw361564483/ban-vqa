@@ -116,7 +116,7 @@ def _load_dataset(dataroot, name, img_id2val, label2ans):
     name: 'train', 'val', 'test-dev2015', test2015'
     """
     question_path = os.path.join(
-        dataroot, 'v2_OpenEnded_mscoco_%s_questions.json' % \
+        '/envs/shareB/yaosw/vqa2.0/', 'v2_OpenEnded_mscoco_%s_questions.json' % \
         (name + '2014' if 'test'!=name[:4] else name))
     questions = sorted(json.load(open(question_path))['questions'],
                        key=lambda x: x['question_id'])
@@ -150,8 +150,8 @@ def _load_visualgenome(dataroot, name, img_id2val, label2ans, adaptive=True):
     dataroot: root path of dataset
     name: 'train', 'val'
     """
-    question_path = os.path.join(dataroot, 'question_answers.json')
-    image_data_path = os.path.join(dataroot, 'image_data.json')
+    question_path = os.path.join('/envs/shareB/yaosw/vg/', 'question_answers.json')
+    image_data_path = os.path.join('/envs/shareB/yaosw/vg/', 'image_data.json')
     ans2label_path = os.path.join(dataroot, 'cache', 'trainval_ans2label.pkl')
     cache_path = os.path.join(dataroot, 'cache', 'vg_%s%s_target.pkl' % (name, '_adaptive' if adaptive else ''))
 
@@ -599,7 +599,7 @@ class Flickr30kFeatureDataset(Dataset):
 
 
 
-def tfidf_from_questions(names, dictionary, dataroot='data', target=['vqa', 'vg', 'cap', 'flickr']):
+def tfidf_from_questions(names, dictionary, dataroot='data', target=['vqa', 'vg', 'flickr']):
     inds = [[], []] # rows, cols for uncoalesce sparse matrix
     df = dict()
     N = len(dictionary)
@@ -619,7 +619,7 @@ def tfidf_from_questions(names, dictionary, dataroot='data', target=['vqa', 'vg'
         for name in names:
             assert name in ['train', 'val', 'test-dev2015', 'test2015']
             question_path = os.path.join(
-                dataroot, 'v2_OpenEnded_mscoco_%s_questions.json' % \
+                '/envs/shareB/yaosw/vqa2.0/', 'v2_OpenEnded_mscoco_%s_questions.json' % \
                 (name + '2014' if 'test'!=name[:4] else name))
             questions = json.load(open(question_path))['questions']
 
@@ -627,7 +627,7 @@ def tfidf_from_questions(names, dictionary, dataroot='data', target=['vqa', 'vg'
                 populate(inds, df, question['question'])
 
     if 'vg' in target: # Visual Genome
-        question_path = os.path.join(dataroot, 'question_answers.json')
+        question_path = os.path.join('/envs/shareB/yaosw/vg/', 'question_answers.json')
         vgq = json.load(open(question_path, 'r'))
         for vg in vgq:
             for q in vg['qas']:

@@ -47,6 +47,12 @@ def train(model, train_loader, eval_loader, num_epochs, output, opt=None, s_epoc
     logger.write('optim: adamax lr=%.4f, decay_step=%d, decay_rate=%.2f, grad_clip=%.2f' % \
         (lr_default, lr_decay_step, lr_decay_rate, grad_clip))
 
+    if os.path.exists('./saved_models/ban/model_epoch16.pth'):
+        checkpoint = torch.load('./saved_models/ban/model_epoch16.pth')
+        model.load_state_dict(checkpoint.get('model_state', checkpoint))
+        s_epoch = checkpoint.get('epoch')
+        logger.write('reload from %d epoch' % s_epoch)
+
     for epoch in range(s_epoch, num_epochs):
         total_loss = 0
         train_score = 0

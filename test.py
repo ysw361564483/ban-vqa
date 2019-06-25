@@ -25,11 +25,11 @@ def parse_args():
     parser.add_argument('--split', type=str, default='test2015')
     parser.add_argument('--input', type=str, default='saved_models/ban')
     parser.add_argument('--output', type=str, default='results')
-    parser.add_argument('--batch_size', type=int, default=256)
+    parser.add_argument('--batch_size', type=int, default=192)
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--logits', action='store_true')
     parser.add_argument('--index', type=int, default=0)
-    parser.add_argument('--epoch', type=int, default=12)
+    parser.add_argument('--epoch', type=int, default=16)
     args = parser.parse_args()
     return args
 
@@ -54,7 +54,7 @@ def get_logits(model, dataloader):
     pred = torch.FloatTensor(N, M).zero_()
     qIds = torch.IntTensor(N).zero_()
     idx = 0
-    bar = progressbar.ProgressBar(max_value=N)
+    bar = progressbar.ProgressBar(maxval=N).start()
     for v, b, q, i in iter(dataloader):
         bar.update(idx)
         batch_size = v.size(0)

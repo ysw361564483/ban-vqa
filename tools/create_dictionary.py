@@ -24,6 +24,7 @@ def parse_args():
 
 def create_dictionary(dataroot, task='vqa'):
     dictionary = Dictionary()
+    data_path = '/envs/shareB/yaosw/raw'
     if task == 'vqa':
         files = [
             'v2_OpenEnded_mscoco_train2014_questions.json',
@@ -32,7 +33,7 @@ def create_dictionary(dataroot, task='vqa'):
             'v2_OpenEnded_mscoco_test-dev2015_questions.json'
         ]
         for path in files:
-            question_path = os.path.join(dataroot, path)
+            question_path = os.path.join(data_path, path)
             qs = json.load(open(question_path))['questions']
             for q in qs:
                 dictionary.tokenize(q['question'], True)
